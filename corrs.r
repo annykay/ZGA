@@ -44,11 +44,11 @@ calculateCorrs <- function(path_li, path_ri, filenames_li, stages_li, filenames_
     varname_ri <- paste('ri', stages_ri[i], sep = "_")
     ri_data <- get(varname_ri)
     for (j in c(1:length(stages_li))){
-      varname_li <- paste('li', stages_li[i], sep = "_")
+      varname_li <- paste('li', stages_li[j], sep = "_")
       li_data <- get(varname_li)
       total <- merge(ri_data[, c(1,2,column_id)], li_data[, c(1,2,column_id)],
          by = c('gene_id', 'transcript_id.s.'), all.x = F, all.y = F)
-      corr <-  cor(total[,3],total[,4])
+      corr <-  cor(total[,3],total[,4], method = 'spearman' )
 
       corrs[i, j] <- corr
 
@@ -57,4 +57,25 @@ calculateCorrs <- function(path_li, path_ri, filenames_li, stages_li, filenames_
   return(corrs)
 }
 
-calculateCorrs(path_li, path_ri, filenames_li, samples_li, filenames_ri, samples_ri, 6)
+correlations <- calculateCorrs(path_li, path_ri, filenames_li, samples_li, filenames_ri, samples_ri, 6)
+corrplot(correlations, method = 'color')
+
+correlation_1 <- correlations[c(11,12,1,2,3,4,5,6,7,8,9,10), c(3,4,5,6,7,14,8,9,10,11,12,13)]
+corrplot(correlation_1, method = 'color')
+corrs_2 <- matrix(nrow=6, ncol=6)
+for (i in c(1,3,5, 7, 9, 11)){
+  for (j in c(1,3,5,7,9,11)){
+    av <- 0.25*(correlation_1[i,j] + correlation_1[i+1, j] + correlation_1[i, j+1] + correlation_1[i+1, j+1])
+    corrs_2[ i%/%2 +1, j%/%2 + 1] <- av
+  }
+}
+
+colnames(corrs_2) <- c("MII", "1 Cell", "2 Cell", "4 Cell", "Mor", "BL")
+row.names(corrs_2) <- c("MII", "1 Cell", "2 Cell", "4 Cell", "Mor", "BL")
+
+pdf("D:/study/OmicsData/project/correlations.pdf")
+corrplot(corrs_2, method = 'color',  addCoef.col = 'grey50', is.corr = FALSE, col.lim = c(min(corrs_2), max(corrs_2)), xlab = 'LiRibo', mar = c(2,2,2,2))
+
+mtext(text = 'LiRibo-Seq', side = 3, line = 2, cex = 2.5, col = 'grey50')
+mtext(text = 'totalRNA-Seq', side = 2, line = 2, cex = 2.5, col = 'grey50')
+dev.off()
