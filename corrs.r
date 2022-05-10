@@ -48,7 +48,7 @@ calculateCorrs <- function(path_li, path_ri, filenames_li, stages_li, filenames_
       li_data <- get(varname_li)
       total <- merge(ri_data[, c(1,2,column_id)], li_data[, c(1,2,column_id)],
          by = c('gene_id', 'transcript_id.s.'), all.x = F, all.y = F)
-      corr <-  cor(total[,3],total[,4], method = 'spearman' )
+      corr <-  cor(log2(total[,3]),log2(total[,4]), method = 'spearman' )
 
       corrs[i, j] <- corr
 
