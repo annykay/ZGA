@@ -1,5 +1,10 @@
+library(corrplot)
+
+#Entering path of our data
 path_ri <- "D:/study/OmicsData/project/totalRNA/"
 path_li <- "D:/study/OmicsData/project/LiRibo/"
+
+#Reading filenames
 setwd(path_ri)
 filenames_ri  <- list.files(pattern="*.txt", full.names=TRUE)
 samples_ri <- sub(".*totalRNA_*", "", sub("*.quant.genes.*", "", filenames_ri))
@@ -8,6 +13,7 @@ setwd(path_li)
 filenames_li  <- list.files(pattern="*.txt", full.names=TRUE)
 samples_li <- sub(".*liRiboseq_*", "", sub("*.quant.genes.*", "", filenames_li))
 
+#Setting columnames
 columns <- c( "gene_id",
  "transcript_id(s)",
  "length",
@@ -25,6 +31,8 @@ columns <- c( "gene_id",
  "FPKM_ci_lower_bound",
  "FPKM_ci_upper_bound",
  "FPKM_coefficient_of_quartile_variation")
+
+#Calculating correlations
 calculateCorrs <- function(path_li, path_ri, filenames_li, stages_li, filenames_ri, stages_ri, column_id){
   setwd(path_ri)
   for (i in c(1:length(filenames_ri))) {
@@ -60,8 +68,11 @@ calculateCorrs <- function(path_li, path_ri, filenames_li, stages_li, filenames_
 correlations <- calculateCorrs(path_li, path_ri, filenames_li, samples_li, filenames_ri, samples_ri, 6)
 corrplot(correlations, method = 'color')
 
+#Rearranging correlations
 correlation_1 <- correlations[c(11,12,1,2,3,4,5,6,7,8,9,10), c(3,4,5,6,7,14,8,9,10,11,12,13)]
 corrplot(correlation_1, method = 'color')
+
+#Averaging correlations for replicates
 corrs_2 <- matrix(nrow=6, ncol=6)
 for (i in c(1,3,5, 7, 9, 11)){
   for (j in c(1,3,5,7,9,11)){
@@ -70,6 +81,7 @@ for (i in c(1,3,5, 7, 9, 11)){
   }
 }
 
+#Drawing plots
 colnames(corrs_2) <- c("MII", "1 Cell", "2 Cell", "4 Cell", "Mor", "BL")
 row.names(corrs_2) <- c("MII", "1 Cell", "2 Cell", "4 Cell", "Mor", "BL")
 

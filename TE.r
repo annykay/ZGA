@@ -1,6 +1,7 @@
 library(reshape2)
 library(ggplot2)
 library(ggpubr)
+Кося кок
 path_ri <- "D:/study/OmicsData/project/totalRNA/"
 path_li <- "D:/study/OmicsData/project/LiRibo/"
 setwd(path_ri)
