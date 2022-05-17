@@ -86,8 +86,8 @@ for (i in c(1:N)){
 }
 
 #Drawing boxplots and calculating statistics
-total_te1 <- total_te[apply(total_te < 6, 1,all),]
-for_violin_plot1 <- melt(total_te1)
+#total_te1 <- total_te[apply(total_te < 6, 1,all),]
+for_violin_plot1 <- melt(total_te)
 
 stat.test <- compare_means(value~variable, data = for_violin_plot1, paired=F, method = "wilcox.test", p.adjust.method = "BH")
 stat.test1 <- stat.test[c(1,6,10,13,15),]
